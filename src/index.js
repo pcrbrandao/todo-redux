@@ -3,37 +3,20 @@ import React, { Component } from 'react';
 import './index.css';
 // import App from './App';
 import registerServiceWorker from './registerServiceWorker';
-
-// import { runAllTests, todoApp } from './todos.js';
-// runAllTests();
-
-import { todoApp } from './todos.js';
 import { createStore } from 'redux';
+import { getVisibleTodos, todoApp } from './todos.js';
+
+// runAllTests();
+// import { runAllTests, todoApp } from './todos.js';
 
 const store = createStore(todoApp);
 let nextTodoId = 0;
 
-const getVisibleTodos = (
-    todos,
-    filter
-) => {
-    switch (filter) {
-        case 'SHOW_ALL':
-            return todos;
-        case 'SHOW_COMPLETED':
-            return todos.filter(
-                t => t.completed
-            );
-        case 'SHOW_ACTIVE':
-            return todos.filter(
-                t => !t.completed
-            );
-        default:
-            return todos;
+const FilterLink = ({filter, currentFilter, children}) => {
+    if (filter === currentFilter) {
+        return <span>{children}</span>;
     }
-}
 
-const FilterLink = ({filter, children}) => {
     return (
         <a href="#"
             onClick={e => {
@@ -48,11 +31,15 @@ const FilterLink = ({filter, children}) => {
     );
 };
 
-class App extends Component {
+class TodoApp extends Component {
     render() {
+        const {
+            todos,
+            visibilityFilter
+        } = this.props;
         const visibleTodos = getVisibleTodos(
-            this.props.todos,
-            this.props.visibilityFilter
+            todos,
+            visibilityFilter
         );
         return (
         <div>
@@ -88,9 +75,15 @@ class App extends Component {
                 )}
             </ul>
             <p>
-                Show: {' '} <FilterLink filter="SHOW_ALL">All</FilterLink>
-                {' '} <FilterLink filter="SHOW_ACTIVE">Active</FilterLink>
-                {' '} <FilterLink filter="SHOW_ALL">Completed</FilterLink>
+                Show: {' '} <FilterLink filter="SHOW_ALL"
+                    currentFilter={visibilityFilter}
+                    >
+                    All
+                    </FilterLink>
+                {' '} <FilterLink filter="SHOW_ACTIVE" 
+                    currentFilter={visibilityFilter}>Active</FilterLink>
+                {' '} <FilterLink filter="SHOW_COMPLETED"
+                    currentFilter={visibilityFilter}>Completed</FilterLink>
             </p>
         </div>
         );
@@ -98,7 +91,7 @@ class App extends Component {
 }
 
 const render = () => {
-    ReactDOM.render(<App 
+    ReactDOM.render(<TodoApp 
         {...store.getState()}/>,
         document.getElementById('root'));
 };

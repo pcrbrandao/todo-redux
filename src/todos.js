@@ -82,6 +82,26 @@ const todo = (state, action) => {
     }
 };
 
+export const getVisibleTodos = (
+    todos,
+    filter
+) => {
+    switch (filter) {
+        case 'SHOW_ALL':
+            return todos;
+        case 'SHOW_COMPLETED':
+            return todos.filter(
+                t => t.completed
+            );
+        case 'SHOW_ACTIVE':
+            return todos.filter(
+                t => !t.completed
+            );
+        default:
+            return todos;
+    }
+}
+
 export const todos = (state = [], action) => {
     switch (action.type) {
         case 'ADD_TODO':
@@ -96,9 +116,9 @@ export const todos = (state = [], action) => {
     }
 };
 
-const visibilityFiler = ( state = 'SHOW_ALL', action) => {
+const visibilityFilter = ( state = 'SHOW_ALL', action) => {
     switch (action.type) {
-        case 'SET_VISILILITY_FILTER':
+        case 'SET_VISIBILITY_FILTER':
             return action.filter;
         default:
             return state;
@@ -107,7 +127,7 @@ const visibilityFiler = ( state = 'SHOW_ALL', action) => {
 
 export const todoApp = combineReducers({
     todos,
-    visibilityFiler
+    visibilityFilter
 });
 
 function testLog() {
